@@ -33,7 +33,7 @@ namespace RomSorter
             switch (selectedOption)
             {
                 case 0:
-                    //SortRoms();
+                    SortRoms();
                     break;
                 case 1:
                     //DownloadRoms();
@@ -45,6 +45,12 @@ namespace RomSorter
                     Exit();
                     break;
             }
+        }
+
+        void SortRoms()
+        {
+            RomSorterClass sorter = new RomSorterClass();
+            sorter.RunSorterMenu();
         }
 
         void Exit()
