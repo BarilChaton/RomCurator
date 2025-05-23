@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.IO.Compression;
 using System.Collections.Generic;
 
 namespace RomSorter
@@ -48,7 +49,7 @@ namespace RomSorter
                     {
                         options.Add(drive);
                     }
-                } 
+                }
                 else
                 {
                     title = "Browsing: " + currentPath;
@@ -90,7 +91,7 @@ namespace RomSorter
                         Console.WriteLine($"\n Selected: {RomDirectory}");
                         Console.WriteLine("Select what you wish to do with the roms in this folder.");
 
-                        // Run curation options menu here
+                        RunCurationOptionsMenu();
 
                         return;
                     }
@@ -110,7 +111,7 @@ namespace RomSorter
                     Console.WriteLine($"\nSelected: {RomDirectory}");
                     Console.WriteLine("Select what you wish to do with the roms in this folder.");
 
-                    // Run curation options menu here
+                    RunCurationOptionsMenu();
 
                     return;
                 }
@@ -136,6 +137,147 @@ namespace RomSorter
                     }
                 }
             }
+        }
+
+        public void RunCurationOptionsMenu()
+        {
+            string prompt = "Select an option: \n";
+            string[] options = { "Sort ROMs", "Delete ROMs", "Back" };
+            UI_Selector menu = new UI_Selector(prompt, options);
+            int selectedOption = menu.Run();
+            switch (selectedOption)
+            {
+                case 0:
+                    SortRoms();
+                    break;
+                case 1:
+                    // DeleteRoms();
+                    break;
+                case 2:
+                    RunFolderSelectMenu();
+                    break;
+            }
+        }
+
+        public void SortRoms()
+        {
+            if (string.IsNullOrWhiteSpace(RomDirectory) || !Directory.Exists(RomDirectory))
+            {
+                Console.WriteLine("No valid ROM directory selected");
+                Console.WriteLine("Press any key to return...");
+                Console.ReadKey(true);
+                RunFolderSelectMenu();
+                return;
+            }
+
+            string prompt = "Select a sorting method: \n";
+            string[] options = { "Sort by Console/System", "Sort by Region", "Sort Alphabetically", "Cancel" };
+
+            UI_Selector selector = new UI_Selector(prompt, options);
+            int selected = selector.Run();
+
+            switch (selected)
+            {
+                case 0:
+                    SortBySystem();
+                    break;
+                case 1:
+                    SortByRegion();
+                    break;
+                case 2:
+                    SortAlphabetically();
+                    break;
+                case 3:
+                    RunCurationOptionsMenu();
+                    break;
+            }
+        }
+
+        private void SortAlphabetically()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SortByRegion()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SortBySystem()
+        {
+            string[] files = Directory.GetFiles(RomDirectory, "*.*", SearchOption.TopDirectoryOnly);
+            foreach (string file in files)
+            {
+                string extension = Path.GetExtension(file).ToLower();
+                string? systemFolder = null;
+
+                if (extension == ".zip")
+                {
+                    systemFolder = InspectZipFile(file);
+                    Console.WriteLine($"File: {file} - System: {systemFolder}");
+                } 
+                else
+                {
+                    systemFolder = extension switch
+                    {
+                        ".nes" => "NES",
+                        ".sfc" or ".smc" => "SNES",
+                        ".gb" => "GameBoy",
+                        ".gbc" => "GameBoy Color",
+                        ".gba" => "GameBoy Advance",
+                        ".n64" or ".z64" or ".v64" => "Nintendo 64",
+                        ".md" => "Genesis",
+                        ".iso" => "PlayStation 2",
+                        ".cue" => "PlayStation 1", // Assumes bin is next to cue
+                        _ => null
+                    };
+                }
+
+                if (systemFolder != null)
+                {
+                    string destFolder = Path.Combine(RomDirectory, systemFolder);
+                    Directory.CreateDirectory(destFolder);
+                    string destPath = Path.Combine(destFolder, Path.GetFileName(file));
+                    File.Move(file, destPath, overwrite: true);
+                    Console.WriteLine($"Moved {Path.GetFileName(file)} to {systemFolder}/");
+                }
+                else
+                {
+                    Console.WriteLine($"Unknown system for file: {file}");
+                }
+            }
+        }
+
+        private string? InspectZipFile(string zipPath)
+        {
+            try
+            {
+                using ZipArchive archive = ZipFile.OpenRead(zipPath);
+                foreach (var entry in archive.Entries)
+                {
+                    string innerExt = Path.GetExtension(entry.FullName).ToLower();
+
+                    return innerExt switch
+                    {
+                        ".nes" => "NES",
+                        ".sfc" or ".smc" => "SNES",
+                        ".gb" => "GameBoy",
+                        ".gbc" => "GameBoy Color",
+                        ".gba" => "GameBoy Advance",
+                        ".n64" or ".z64" or ".v64" => "Nintendo 64",
+                        ".md" => "Genesis",
+                        ".iso" => "PlayStation 2",
+                        ".cue" => "PlayStation 1", // Assumes bin is next to cue
+                        _ => null
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error reading ZIP: {zipPath} - {ex.Message}");
+            }
+
+            return null;
         }
     }
 }
