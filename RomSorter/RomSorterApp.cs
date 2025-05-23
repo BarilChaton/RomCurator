@@ -50,7 +50,7 @@ namespace RomSorter
         void SortRoms()
         {
             RomSorterClass sorter = new RomSorterClass();
-            sorter.RunSorterMenu();
+            sorter.RunFolderSelectMenu();
         }
 
         void Exit()
