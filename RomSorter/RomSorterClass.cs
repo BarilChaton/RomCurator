@@ -10,17 +10,7 @@ namespace RomSorter
 
         public void RunFolderSelectMenu()
         {
-            string prompt = @"
-# ______                _____            _            
-# | ___ \              /  ___|          | |           
-# | |_/ /___  _ __ ___ \ `--.  ___  _ __| |_ ___ _ __ 
-# |    // _ \| '_ ` _ \ `--. \/ _ \| '__| __/ _ \ '__|
-# | |\ \ (_) | | | | | /\__/ / (_) | |  | ||  __/ |   
-# \_| \_\___/|_| |_| |_\____/ \___/|_|   \__\___|_|   
-                                                    
-                                                    
-" + "\n Version 0.0.1" +
-"\n Use the arrow keys to select an option.";
+            string prompt = "Use the arrow keys to select an option. \n";
 
             string[] options = { "Select folder path", "Back" };
             UI_Selector menu = new UI_Selector(prompt, options);
@@ -138,9 +128,14 @@ namespace RomSorter
                 }
                 else
                 {
-                    string[] subDirs = Directory.GetDirectories(currentPath);
-                    string chosenDir = subDirs[selectedIndex - 3]; // offset for [Select]/[Up]
-                    currentPath = chosenDir;
+                    int commandCount = 3;
+
+                    if (selectedIndex >= commandCount)
+                    {
+                        string selectedSubDirName = options[selectedIndex];
+                        string selectedFullPath = Path.Combine(currentPath, selectedSubDirName);
+                        currentPath = selectedFullPath;
+                    }
                 }
             }
         }
