@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace RomSorter
 {
-    class RomSorterClass : RomSorterApp
+    class RomCuratorComponent : RomCuratorApp
     {
         public string? RomDirectory { get; private set; }
 
@@ -88,10 +88,9 @@ namespace RomSorter
                     {
                         RomDirectory = manualPath;
                         Console.WriteLine($"\n Selected: {RomDirectory}");
-                        Console.WriteLine("Press any key to begin sorting...");
-                        Console.ReadKey(true);
+                        Console.WriteLine("Select what you wish to do with the roms in this folder.");
 
-                        // Run Sort options menu here
+                        // Run curation options menu here
 
                         return;
                     }
@@ -109,10 +108,9 @@ namespace RomSorter
                 {
                     RomDirectory = currentPath;
                     Console.WriteLine($"\nSelected: {RomDirectory}");
-                    Console.WriteLine("Press any key to begin sorting...");
-                    Console.ReadKey(true);
+                    Console.WriteLine("Select what you wish to do with the roms in this folder.");
 
-                    // Run Sort options menu here
+                    // Run curation options menu here
 
                     return;
                 }

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace RomSorter
 {
-    class RomSorterApp
+    class RomCuratorApp
     {
         public void Start()
         {
@@ -15,18 +15,19 @@ namespace RomSorter
         public void RunMain()
         {
             string prompt = @"
-# ______                _____            _            
-# | ___ \              /  ___|          | |           
-# | |_/ /___  _ __ ___ \ `--.  ___  _ __| |_ ___ _ __ 
-# |    // _ \| '_ ` _ \ `--. \/ _ \| '__| __/ _ \ '__|
-# | |\ \ (_) | | | | | /\__/ / (_) | |  | ||  __/ |   
-# \_| \_\___/|_| |_| |_\____/ \___/|_|   \__\___|_|   
-                                                    
-                                                    
+Baril Chaton's
+______                _____                 _             
+| ___ \              /  __ \               | |            
+| |_/ /___  _ __ ___ | /  \/_   _ _ __ __ _| |_ ___  _ __ 
+|    // _ \| '_ ` _ \| |   | | | | '__/ _` | __/ _ \| '__|
+| |\ \ (_) | | | | | | \__/\ |_| | | | (_| | || (_) | |   
+\_| \_\___/|_| |_| |_|\____/\__,_|_|  \__,_|\__\___/|_|   
+                                                          
+                                                          
 " + "\n Version 0.0.1" +
 "\n Use the arrow keys to select an option.";
 
-            string[] options = { "Sort ROMs", "Download ROMs", "Delete ROMs", "Exit" };
+            string[] options = { "Curate ROMs", "Download ROMs", "Exit" };
             UI_Selector mainMenu = new UI_Selector(prompt, options);
             int selectedOption = mainMenu.Run();
 
@@ -39,9 +40,6 @@ namespace RomSorter
                     //DownloadRoms();
                     break;
                 case 2:
-                    //DeleteRoms();
-                    break;
-                case 3:
                     Exit();
                     break;
             }
@@ -49,7 +47,7 @@ namespace RomSorter
 
         void SortRoms()
         {
-            RomSorterClass sorter = new RomSorterClass();
+            RomCuratorComponent sorter = new RomCuratorComponent();
             sorter.RunFolderSelectMenu();
         }
 

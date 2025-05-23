@@ -4,7 +4,7 @@
     {
         static void Main(string[] args)
         {
-            RomSorterApp main = new RomSorterApp();
+            RomCuratorApp main = new RomCuratorApp();
             main.Start();
         }
     }
