@@ -175,7 +175,7 @@ namespace RomSorter
             }
 
             string prompt = "Select a sorting method: \n";
-            string[] options = { "Sort by Console/System", "Sort by Region", "Sort Alphabetically", "Cancel" };
+            string[] options = { "Sort by Console/System", "Sort by Region", "Cancel" };
 
             UI_Selector selector = new UI_Selector(prompt, options);
             int selected = selector.Run();
@@ -189,9 +189,6 @@ namespace RomSorter
                     SortByRegion();
                     break;
                 case 2:
-                    SortAlphabetically();
-                    break;
-                case 3:
                     RunCurationOptionsMenu();
                     break;
             }
@@ -222,13 +219,32 @@ namespace RomSorter
                 {
                     systemFolder = extension switch
                     {
-                        ".nes" => "NES",
-                        ".sfc" or ".smc" => "SNES",
-                        ".gb" => "GameBoy",
-                        ".gbc" => "GameBoy Color",
-                        ".gba" => "GameBoy Advance",
-                        ".n64" or ".z64" or ".v64" => "Nintendo 64",
-                        ".md" => "Genesis",
+                        ".adf" => "amiga",
+                        ".nib" => "c64",
+                        ".nes" => "nes",
+                        ".sfc" or ".smc" => "snes",
+                        ".gb" => "gb",
+                        ".gbc" => "gbc",
+                        ".gba" => "gba",
+                        ".nds" => "nds",
+                        ".n64" or ".z64" or ".v64" => "n64",
+                        ".md" => "megadrive",
+                        ".32x" => "sega32x",
+                        ".pce" => "pcengine",
+                        ".xex" => "atari800",
+                        ".a26" => "atari2600",
+                        ".a78" => "atari7800",
+                        ".lnx" => "atarilynx",
+                        ".col" => "coleco",
+                        ".int" => "intellivision",
+                        ".sg" => "sg-1000",
+                        ".vec" => "vectrex",
+                        ".cpr" => "amstradgx4000",
+                        ".mgw" => "gameandwatch",
+                        ".gg" => "gamegear",
+                        ".sms" => "mastersystem",
+                        ".ws" => "wonderswan",
+                        ".ngc" => "ngpc",
                         _ => "Unknown"
                     };
                 }
@@ -246,11 +262,6 @@ namespace RomSorter
                 Console.WriteLine($"Moving {file} to {destDir}");
                 File.Move(file, destPath, overwrite: true);
             }
-        }
-
-        private void SortAlphabetically()
-        {
-            throw new NotImplementedException();
         }
 
         private void SortByRegion()
@@ -278,14 +289,33 @@ namespace RomSorter
 
                     return innerExt switch
                     {
-                        ".nes" => "NES",
-                        ".sfc" or ".smc" => "SNES",
-                        ".gb" => "GameBoy",
-                        ".gbc" => "GameBoy Color",
-                        ".gba" => "GameBoy Advance",
-                        ".n64" or ".z64" or ".v64" => "Nintendo 64",
-                        ".md" => "Genesis",
-                        _ => null
+                        ".adf" => "amiga",
+                        ".nib" => "c64",
+                        ".nes" => "nes",
+                        ".sfc" or ".smc" => "snes",
+                        ".gb" => "gb",
+                        ".gbc" => "gbc",
+                        ".gba" => "gba",
+                        ".nds" => "nds",
+                        ".n64" or ".z64" or ".v64" => "n64",
+                        ".md" => "megadrive",
+                        ".32x" => "sega32x",
+                        ".pce" => "pcengine",
+                        ".xex" => "atari800",
+                        ".a26" => "atari2600",
+                        ".a78" => "atari7800",
+                        ".lnx" => "atarilynx",
+                        ".col" => "coleco",
+                        ".int" => "intellivision",
+                        ".sg" => "sg-1000",
+                        ".vec" => "vectrex",
+                        ".cpr" => "amstradgx4000",
+                        ".mgw" => "gameandwatch",
+                        ".gg" => "gamegear",
+                        ".sms" => "mastersystem",
+                        ".ws" => "wonderswan",
+                        ".ngc" => "ngpc",
+                        _ => "Unknown"
                     };
                 }
             }
