@@ -199,6 +199,7 @@ namespace RomSorter
         {
             
             string[] files = Directory.GetFiles(RomDirectory, "*.*", SearchOption.TopDirectoryOnly);
+
             foreach (string file in files)
             {
                 string extension = Path.GetExtension(file).ToLower();
