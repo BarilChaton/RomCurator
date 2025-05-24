@@ -8,7 +8,7 @@ namespace RomSorter
     {
         public void Start()
         {
-            Console.Title = "RomSorter";
+            Console.Title = "RomCurator";
             RunMain();
         }
 

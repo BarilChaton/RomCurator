@@ -1,14 +1,14 @@
 ﻿using System;
-using System.IO;
 using System.IO.Compression;
-using System.Collections.Generic;
 
 namespace RomSorter
 {
     class RomCuratorComponent : RomCuratorApp
     {
         public string? RomDirectory { get; private set; }
+        string[] skipExtensions = { ".iso", ".bin", ".cue", ".chd", ".img" };
 
+        #region Folder Selection Methods
         public void RunFolderSelectMenu()
         {
             string prompt = "Use the arrow keys to select an option. \n";
@@ -139,6 +139,8 @@ namespace RomSorter
             }
         }
 
+        #endregion
+
         public void RunCurationOptionsMenu()
         {
             string prompt = "Select an option: \n";
@@ -161,6 +163,8 @@ namespace RomSorter
 
         public void SortRoms()
         {
+            Console.Clear();
+
             if (string.IsNullOrWhiteSpace(RomDirectory) || !Directory.Exists(RomDirectory))
             {
                 Console.WriteLine("No valid ROM directory selected");
@@ -193,23 +197,21 @@ namespace RomSorter
             }
         }
 
-        private void SortAlphabetically()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void SortByRegion()
-        {
-            throw new NotImplementedException();
-        }
-
+        #region Sorting Methods
         private void SortBySystem()
         {
+            
             string[] files = Directory.GetFiles(RomDirectory, "*.*", SearchOption.TopDirectoryOnly);
             foreach (string file in files)
             {
                 string extension = Path.GetExtension(file).ToLower();
                 string? systemFolder = null;
+
+                if (skipExtensions.Contains(extension))
+                {
+                    Console.WriteLine($"Skipping complex or unsupported file: {file}");
+                    continue;
+                }
 
                 if (extension == ".zip")
                 {
@@ -227,27 +229,38 @@ namespace RomSorter
                         ".gba" => "GameBoy Advance",
                         ".n64" or ".z64" or ".v64" => "Nintendo 64",
                         ".md" => "Genesis",
-                        ".iso" => "PlayStation 2",
-                        ".cue" => "PlayStation 1", // Assumes bin is next to cue
-                        _ => null
+                        _ => "Unknown"
                     };
                 }
 
-                if (systemFolder != null)
+                if (systemFolder == "Unknown" || systemFolder == "UnknownSystem")
                 {
-                    string destFolder = Path.Combine(RomDirectory, systemFolder);
-                    Directory.CreateDirectory(destFolder);
-                    string destPath = Path.Combine(destFolder, Path.GetFileName(file));
-                    File.Move(file, destPath, overwrite: true);
-                    Console.WriteLine($"Moved {Path.GetFileName(file)} to {systemFolder}/");
+                    Console.WriteLine($"Could not identify system for: {file}");
+                    continue;
                 }
-                else
-                {
-                    Console.WriteLine($"Unknown system for file: {file}");
-                }
+
+                string destDir = Path.Combine(RomDirectory, systemFolder);
+                Directory.CreateDirectory(destDir);
+                string destPath = Path.Combine(destDir, Path.GetFileName(file));
+
+                Console.WriteLine($"Moving {file} to {destDir}");
+                File.Move(file, destPath, overwrite: true);
             }
         }
 
+        private void SortAlphabetically()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SortByRegion()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region Helper Methods
         private string? InspectZipFile(string zipPath)
         {
             try
@@ -256,6 +269,12 @@ namespace RomSorter
                 foreach (var entry in archive.Entries)
                 {
                     string innerExt = Path.GetExtension(entry.FullName).ToLower();
+
+                    if (innerExt is ".iso" or ".bin" or ".cue" or ".chd")
+                    {
+                        Console.WriteLine($"ZIP contains unsupported disc image format: {entry.FullName}");
+                        return null;
+                    }
 
                     return innerExt switch
                     {
@@ -266,8 +285,6 @@ namespace RomSorter
                         ".gba" => "GameBoy Advance",
                         ".n64" or ".z64" or ".v64" => "Nintendo 64",
                         ".md" => "Genesis",
-                        ".iso" => "PlayStation 2",
-                        ".cue" => "PlayStation 1", // Assumes bin is next to cue
                         _ => null
                     };
                 }
@@ -279,5 +296,6 @@ namespace RomSorter
 
             return null;
         }
+        #endregion
     }
 }
