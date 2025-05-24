@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO.Compression;
+﻿using System.IO.Compression;
 
 namespace RomSorter
 {
@@ -197,25 +196,28 @@ namespace RomSorter
         #region Sorting Methods
         private void SortBySystem()
         {
-            
+
             string[] files = Directory.GetFiles(RomDirectory, "*.*", SearchOption.TopDirectoryOnly);
+            int totalFiles = files.Length;
+            int processedFiles = 0;
 
             foreach (string file in files)
             {
+                processedFiles++;
+                DrawProgressBar(processedFiles, totalFiles);
+
                 string extension = Path.GetExtension(file).ToLower();
                 string? systemFolder = null;
 
                 if (skipExtensions.Contains(extension))
                 {
-                    Console.WriteLine($"Skipping complex or unsupported file: {file}");
                     continue;
                 }
 
                 if (extension == ".zip")
                 {
                     systemFolder = InspectZipFile(file);
-                    Console.WriteLine($"File: {file} - System: {systemFolder}");
-                } 
+                }
                 else
                 {
                     systemFolder = extension switch
@@ -252,7 +254,6 @@ namespace RomSorter
 
                 if (systemFolder == "Unknown" || systemFolder == "UnknownSystem")
                 {
-                    Console.WriteLine($"Could not identify system for: {file}");
                     continue;
                 }
 
@@ -260,9 +261,14 @@ namespace RomSorter
                 Directory.CreateDirectory(destDir);
                 string destPath = Path.Combine(destDir, Path.GetFileName(file));
 
-                Console.WriteLine($"Moving {file} to {destDir}");
                 File.Move(file, destPath, overwrite: true);
             }
+
+            Console.WriteLine("\nSorting complete!");
+            Console.CursorVisible = true;
+
+            Console.ReadKey(true);
+            RunMain();
         }
 
         private void SortByRegion()
@@ -327,6 +333,16 @@ namespace RomSorter
 
             return null;
         }
+
+        private void DrawProgressBar(int progress, int total, int barLength = 50)
+        {
+            double percentage = (double)progress / total;
+            int filledLength = (int)(barLength * percentage);
+            string bar = new string('#', filledLength).PadRight(barLength);
+            Console.CursorVisible = false;
+            Console.Write($"\rSorting ROMs... [{bar}] {progress}/{total}");
+        }
+
         #endregion
     }
 }
